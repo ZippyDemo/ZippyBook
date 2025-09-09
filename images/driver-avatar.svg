@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title>Driver Avatar</title>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38B2AC"/>
+      <stop offset="100%" stop-color="#2C7A7B"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="64" fill="#E6FFFA"/>
+  <circle cx="64" cy="64" r="56" fill="url(#grad)"/>
+  <!-- Head -->
+  <circle cx="64" cy="52" r="18" fill="#EDF2F7"/>
+  <!-- Cap -->
+  <path d="M46 48c0-8 8-14 18-14s18 6 18 14H46z" fill="#2D3748"/>
+  <rect x="46" y="48" width="36" height="4" rx="2" fill="#4A5568"/>
+  <!-- Body -->
+  <path d="M24 112c0-18 18-28 40-28s40 10 40 28v8H24v-8z" fill="#EDF2F7"/>
+  <!-- Seatbelt detail -->
+  <path d="M44 84l40 40" stroke="#CBD5E0" stroke-width="6" stroke-linecap="round"/>
+</svg>

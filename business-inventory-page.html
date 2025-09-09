@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Inventory - ZippyBook</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/business-inventory-page.css">
+    <link rel="icon" type="image/svg+xml" href="images/zippy-icon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo" style="display: flex; align-items: center; justify-content: center;">
+                <img src="images/zippy-icon.svg" alt="ZippyBook Logo" class="logo-img" style="width: 48px; height: 48px; margin-right: 10px; object-fit: contain;">
+                <h1 class="logo-text" style="margin: 0; font-size: 1.9rem; font-weight: 700; background: linear-gradient(135deg, #6366f1, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent;">ZippyBook</h1>
+            </div>
+            <nav class="main-nav">
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span class="hamburger"></span>
+                </button>
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a></li>
+                    <li class="nav-item"><a href="#" class="nav-link" id="shareBusinessBtn">
+                        <i class="fas fa-share-alt"></i> Share
+                    </a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Business Header -->
+        <section class="business-hero">
+            <div class="business-cover">
+                <img src="" alt="Business Cover" id="businessCoverImage">
+                <div class="business-cover-overlay"></div>
+            </div>
+            <div class="business-header-content">
+                <div class="business-info-container">
+                    <div class="business-logo">
+                        <img src="" alt="Business Logo" id="businessLogoImage">
+                    </div>
+                    <div class="business-details">
+                        <h1 class="business-name" id="businessName">Loading...</h1>
+                        <div class="business-meta">
+                            <span class="business-category" id="businessCategory">Category</span>
+                            <div class="business-rating">
+                                <div class="stars" id="businessRating">★★★★☆</div>
+                                <span class="rating-count" id="ratingCount">(0 reviews)</span>
+                            </div>
+                        </div>
+                        <p class="business-description" id="businessDescription">Business description...</p>
+                        <div class="business-contact-info">
+                            <div class="contact-item" id="businessAddress">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Address loading...</span>
+                            </div>
+                            <div class="contact-item" id="businessHours">
+                                <i class="fas fa-clock"></i>
+                                <span>Hours loading...</span>
+                            </div>
+                            <div class="contact-item" id="businessPhone">
+                                <i class="fas fa-phone"></i>
+                                <span>Phone loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <main class="inventory-main">
+            <div class="inventory-header">
+                <div class="inventory-title-section">
+                    <h2>Our Menu & Services</h2>
+                    <p class="inventory-subtitle">Discover what we have to offer</p>
+                </div>
+                <div class="inventory-controls">
+                    <div class="search-filter-container">
+                        <div class="search-box">
+                            <input type="text" placeholder="Search items..." id="inventorySearch" class="search-input">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <div class="filter-dropdown">
+                            <button class="filter-btn" id="categoryFilterBtn">
+                                <i class="fas fa-filter"></i>
+                                <span>All Categories</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu" id="categoryFilterMenu">
+                                <div class="filter-option active" data-category="all">
+                                    <span>All Categories</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid" title="Grid View">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" data-view="list" title="List View">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Grid -->
+            <div class="inventory-container">
+                <div class="inventory-grid" id="inventoryGrid">
+                    <!-- Items will be loaded dynamically -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>No items found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState">
+                    <div class="loading-spinner"></div>
+                    <p>Loading inventory...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Item Detail Modal -->
+        <div class="modal item-detail-modal" id="itemDetailModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeItemModal">&times;</button>
+                <div class="item-detail-container">
+                    <div class="item-detail-image">
+                        <img src="" alt="Item Image" id="modalItemImage">
+                        <div class="item-badge" id="modalItemBadge" style="display: none;">
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="item-detail-info">
+                        <h2 class="item-name" id="modalItemName">Item Name</h2>
+                        <div class="item-category" id="modalItemCategory">Category</div>
+                        <div class="item-price" id="modalItemPrice">$0.00</div>
+                        <div class="item-description" id="modalItemDescription">
+                            Item description goes here...
+                        </div>
+                        <div class="item-availability" id="modalItemAvailability">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Available</span>
+                        </div>
+                        <div class="item-actions">
+                            <div class="quantity-selector">
+                                <button class="qty-btn minus" id="qtyMinus">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" value="1" min="1" max="10" id="qtyInput">
+                                <button class="qty-btn plus" id="qtyPlus">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button class="btn btn-primary add-to-cart" id="addToCartBtn">
+                                <i class="fas fa-shopping-cart"></i>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Cart -->
+        <div class="floating-cart" id="floatingCart" style="display: none;">
+            <div class="cart-content">
+                <div class="cart-info">
+                    <span class="cart-count" id="cartCount">0</span>
+                    <span class="cart-text">items in cart</span>
+                </div>
+                <button class="btn btn-primary view-cart" id="viewCartBtn">
+                    View Cart
+                </button>
+            </div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div class="modal cart-modal" id="cartModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeCartModal">&times;</button>
+                <div class="cart-header">
+                    <h2>Your Order</h2>
+                    <button class="btn btn-outline clear-cart" id="clearCartBtn">
+                        <i class="fas fa-trash"></i> Clear Cart
+                    </button>
+                </div>
+                <div class="cart-items" id="cartItems">
+                    <!-- Cart items will be loaded here -->
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span id="cartSubtotal">$0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Tax:</span>
+                            <span id="cartTax">$0.00</span>
+                        </div>
+                        <div class="total-row total-final">
+                            <span>Total:</span>
+                            <span id="cartTotal">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="cart-actions">
+                        <button class="btn btn-outline" id="continueShoppingBtn">Continue Shopping</button>
+                        <button class="btn btn-primary" id="proceedToCheckoutBtn">
+                            <i class="fas fa-credit-card"></i>
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer">
+            <!-- Toast notifications will appear here -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/business-inventory-page.js" type="module"></script>
+</body>
+</html>

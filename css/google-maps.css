@@ -1,0 +1,242 @@
+/* Google Maps Integration Styles */
+
+/* Map containers */
+.map-container {
+  height: 300px;
+  margin: var(--spacing-md) 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.explore-map {
+  height: 100%;
+  min-height: 500px;
+  border-radius: var(--radius-lg);
+}
+
+.service-map {
+  height: 300px;
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+}
+
+.location-map-preview {
+  height: 200px;
+  margin: var(--spacing-md) 0;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+}
+
+/* Location inputs are styled in styles.css; avoid overriding to prevent mobile layout conflicts */
+
+/* Map view toggle */
+.map-view-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-md);
+}
+
+.view-container {
+  position: relative;
+}
+
+/* Ensure the container naturally expands with the active view content */
+.list-view, .map-view {
+  display: none;           /* hidden by default */
+  position: static;        /* participate in normal flow */
+  width: 100%;
+  height: auto;
+  opacity: 1;
+  visibility: visible;     /* visibility handled via display */
+}
+
+.list-view.active, .map-view.active {
+  display: block;          /* show active view */
+}
+
+/* Service location styles */
+.service-location {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+  font-size: 0.9rem;
+}
+
+.service-location i, 
+.service-location .fas {
+  margin-right: var(--spacing-xs);
+  color: var(--color-primary);
+}
+
+/* Saved locations */
+.saved-locations-container {
+  margin-top: var(--spacing-md);
+}
+
+.saved-location-list {
+  margin-bottom: var(--spacing-md);
+}
+
+.saved-location-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.saved-location-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.location-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.location-details {
+  flex: 1;
+}
+
+.location-details h4 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 1rem;
+}
+
+.location-details p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.location-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+/* Location type options */
+.location-type-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.location-type-option {
+  flex: 1;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.location-type-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.location-type-option input[type="radio"]:checked + .location-type-icon {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.location-type-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-secondary);
+  border-radius: 50%;
+  margin-bottom: var(--spacing-xs);
+  transition: all 0.3s ease;
+}
+
+.location-type-label {
+  font-size: 0.9rem;
+}
+
+/* Directions panel */
+#directions-panel {
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+#directions-panel .adp-directions {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#directions-panel .adp-directions td {
+  padding: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Info window customization */
+.gm-style .gm-style-iw-c {
+  padding: var(--spacing-sm) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.gm-style .gm-style-iw-d {
+  overflow: hidden !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .location-box {
+    margin-top: var(--spacing-md);
+  }
+  
+  .map-container,
+  .service-map,
+  .explore-map {
+    height: 250px;
+  }
+  
+  .location-map-preview {
+    height: 150px;
+  }
+  
+  .location-type-options {
+    flex-wrap: wrap;
+  }
+  
+  .location-type-option {
+    min-width: calc(50% - var(--spacing-sm));
+  }
+}
+
+@media (max-width: 480px) {
+  .map-view-toggle {
+    justify-content: center;
+  }
+  
+  .location-actions {
+    flex-direction: column;
+  }
+
+  .location-btn { font-size: 1.4rem; padding: 10px; }
+}
