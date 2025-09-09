@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Dashboard - ZippyBook</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/business-dashboard.css">
+    <link rel="icon" type="image/svg+xml" href="images/zippy-icon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo" style="display: flex; align-items: center; justify-content: center;">
+                <img src="images/zippy-icon.svg" alt="ZippyBook Logo" class="logo-img" style="width: 48px; height: 48px; margin-right: 10px; object-fit: contain;">
+                <h1 class="logo-text" style="margin: 0; font-size: 1.9rem; font-weight: 700; background: linear-gradient(135deg, #6366f1, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent;">ZippyBook</h1>
+            </div>
+            <nav class="main-nav">
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span class="hamburger"></span>
+                </button>
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html#home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#reports" class="nav-link">Reports</a></li>
+                    <li class="nav-item"><a href="#settings" class="nav-link">Settings</a></li>
+                    <!-- Account dropdown (aligned with index.html) -->
+                    <li class="nav-item nav-dropdown" id="accountDropdown">
+                        <a href="#" class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                            <span class="guest-only"><i class="fas fa-user-circle"></i> Account</span>
+                            <span class="auth-only">
+                                <img src="images/default-avatar.svg" alt="User" class="avatar-small">
+                                <span class="username">My Account</span>
+                            </span>
+                            <i class="fas fa-chevron-down dropdown-caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="guest-only"><a href="index.html#home" id="nav-login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                            <li class="guest-only"><a href="index.html#home" id="nav-signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                            <li class="auth-only"><a href="#profile"><i class="fas fa-user-cog"></i> Business Profile</a></li>
+                            <li class="auth-only"><a href="#reports"><i class="fas fa-chart-line"></i> Reports</a></li>
+                            <li class="auth-only menu-divider"></li>
+                            <li class="auth-only"><a href="#" id="nav-logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <!-- user-actions avatar dropdown removed; using nav dropdown above for consistency -->
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <div class="profile-summary">
+                        <img id="business-avatar" src="images/avatars/avatar-3.svg" alt="Business" class="profile-avatar" onerror="this.onerror=null;this.src='images/default-avatar.svg'">
+                        <div>
+                            <h1 class="welcome-message">Welcome back, <span id="business-name">Restaurant Name</span>!</h1>
+                            <p class="header-subtitle">Here's your business overview for today.</p>
+                        </div>
+                    </div>
+                    
+                </header>
+
+                <section class="dashboard-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-receipt"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-value" id="active-orders">0</span>
+                            <span class="metric-label">Active Orders</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-value" id="completed-orders">0</span>
+                            <span class="metric-label">Completed Today</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-value" id="today-revenue">$0.00</span>
+                            <span class="metric-label">Revenue Today</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-users"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-value" id="new-customers">0</span>
+                            <span class="metric-label">New Customers</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="dashboard-main-grid">
+                    <aside class="dashboard-sidebar">
+                        <section class="dashboard-section" id="quick-actions">
+                            <h2>Management</h2>
+                            <nav class="dashboard-nav" role="navigation" aria-label="Dashboard sections">
+                                <button class="nav-btn active" data-section="orders">
+                                    <i class="fas fa-th-list"></i>
+                                    <span>Orders</span>
+                                </button>
+                                <button class="nav-btn" data-section="delivery">
+                                    <i class="fas fa-motorcycle"></i>
+                                    <span>Delivery</span>
+                                </button>
+                                <button class="nav-btn" data-section="inventory">
+                                    <i class="fas fa-box"></i>
+                                    <span>Inventory</span>
+                                </button>
+                                <button class="nav-btn" data-section="drivers">
+                                    <i class="fas fa-truck"></i>
+                                    <span>Drivers</span>
+                                </button>
+                                <button class="nav-btn" data-section="profile">
+                                    <i class="fas fa-user-cog"></i>
+                                    <span>Business Profile</span>
+                                </button>
+                            </nav>
+                        </section>
+                    </aside>
+
+                    <div class="dashboard-main-content">
+                        <!-- Orders Section -->
+                        <section class="content-section active" id="orders-section">
+                            <div class="section-header">
+                                <h2>Orders</h2>
+                                <div class="search-bar">
+                                    <input type="search" placeholder="Search orders..." aria-label="Search orders" class="search-input">
+                                    <button class="refresh-btn" aria-label="Refresh orders">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="orders-split">
+                                <div class="orders-column" id="delivery-orders">
+                                    <h3>Delivery Orders</h3>
+                                    <div class="orders-list" role="list" aria-label="Delivery orders list" id="delivery-orders-list"></div>
+                                </div>
+                                <div class="orders-column" id="dinein-orders">
+                                    <h3>Dine-In Orders</h3>
+                                    <div class="orders-list" role="list" aria-label="Dine-In orders list" id="dinein-orders-list"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Other sections from old file go here -->
+                        <section class="content-section" id="kitchen-section">
+                            <div class="section-header">
+                                <h2>Kitchen Dashboard</h2>
+                                <div class="kitchen-filters">
+                                    <button class="status-filter active">Preparing</button>
+                                    <button class="status-filter">Ready</button>
+                                    <button class="status-filter">Completed</button>
+                                </div>
+                            </div>
+                            <div class="kitchen-orders-grid"></div>
+                        </section>
+
+                        <section class="content-section" id="delivery-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-motorcycle"></i> Delivery Management</h2>
+                                <div class="delivery-header-actions">
+                                    <button class="btn btn-secondary" id="refreshDeliveriesBtn">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                    <button class="btn btn-primary" id="createDeliveryBtn">
+                                        <i class="fas fa-plus"></i> Create Delivery
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Delivery Statistics -->
+                            <div class="delivery-stats-grid">
+                                <div class="delivery-stat-card pending">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number" id="pendingDeliveries">5</span>
+                                        <span class="stat-label">Pending Orders</span>
+                                    </div>
+                                </div>
+                                <div class="delivery-stat-card active">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-route"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number" id="activeDeliveries">3</span>
+                                        <span class="stat-label">In Transit</span>
+                                    </div>
+                                </div>
+                                <div class="delivery-stat-card completed">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number" id="completedDeliveries">12</span>
+                                        <span class="stat-label">Completed Today</span>
+                                    </div>
+                                </div>
+                                <div class="delivery-stat-card avg-time">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-stopwatch"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number" id="avgDeliveryTime">28</span>
+                                        <span class="stat-label">Avg. Time (min)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="delivery-main-content">
+                                <!-- Left Column: Delivery Tracking -->
+                                <div class="delivery-left-panel">
+                                    <div class="delivery-map-container">
+                                        <div class="map-header">
+                                            <h3><i class="fas fa-map-marked-alt"></i> Live Tracking</h3>
+                                            <div class="map-controls">
+                                                <button class="map-control-btn" title="Zoom to fit all deliveries">
+                                                    <i class="fas fa-expand-arrows-alt"></i>
+                                                </button>
+                                                <button class="map-control-btn" title="Refresh map">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="delivery-map" id="deliveryMap">
+                                            <div class="map-placeholder">
+                                                <i class="fas fa-map"></i>
+                                                <p>Interactive delivery map will load here</p>
+                                                <small>Real-time driver locations and routes</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Active Drivers Panel -->
+                                    <div class="active-drivers-panel">
+                                        <div class="panel-header">
+                                            <h3><i class="fas fa-users"></i> Active Drivers</h3>
+                                            <span class="driver-count" id="activeDriverCount">4 online</span>
+                                        </div>
+                                        <div class="drivers-list" id="activeDriversList">
+                                            <!-- Active drivers will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Delivery Orders -->
+                                <div class="delivery-right-panel">
+                                    <div class="delivery-orders-header">
+                                        <h3><i class="fas fa-list-alt"></i> Delivery Orders</h3>
+                                        <div class="delivery-filters">
+                                            <button class="filter-btn active" data-status="all">
+                                                <span class="filter-count">20</span>
+                                                All
+                                            </button>
+                                            <button class="filter-btn pending" data-status="pending">
+                                                <span class="filter-count">5</span>
+                                                Pending
+                                            </button>
+                                            <button class="filter-btn assigned" data-status="assigned">
+                                                <span class="filter-count">2</span>
+                                                Assigned
+                                            </button>
+                                            <button class="filter-btn transit" data-status="in-transit">
+                                                <span class="filter-count">3</span>
+                                                In Transit
+                                            </button>
+                                            <button class="filter-btn completed" data-status="completed">
+                                                <span class="filter-count">12</span>
+                                                Delivered
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="delivery-search-bar">
+                                        <div class="search-input-container">
+                                            <i class="fas fa-search"></i>
+                                            <input type="text" placeholder="Search by order #, customer name, or address..." id="deliverySearchInput">
+                                        </div>
+                                        <div class="sort-dropdown">
+                                            <select id="deliverySortSelect">
+                                                <option value="newest">Newest First</option>
+                                                <option value="oldest">Oldest First</option>
+                                                <option value="priority">Priority</option>
+                                                <option value="distance">Distance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="delivery-items" id="deliveryItemsList">
+                                        <!-- Delivery items will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="content-section" id="inventory-section">
+                            <div class="section-header">
+                                <h2>Inventory Management</h2>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn btn-primary" id="openInventoryModalBtn">Add Item</button>
+                                </div>
+                            </div>
+                            <div class="inventory-grid"></div>
+                        </section>
+
+                        <section class="content-section" id="staff-section">
+                            <div class="section-header">
+                                <h2>Staff Management</h2>
+                                <button class="btn btn-primary" id="openShiftsModal">Manage Shifts</button>
+                            </div>
+                            <div class="staff-content">
+                                <div class="positions-panel">
+                                    <h3>Positions</h3>
+                                    <div class="positions-list"></div>
+                                </div>
+                                <div class="clock-log-panel">
+                                    <h3>Clock In/Out Log</h3>
+                                    <div class="clock-log-list" role="table"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="content-section" id="drivers-section">
+                            <div class="section-header">
+                                <h2>Driver Management</h2>
+                                <button class="btn btn-primary" id="addDriverBtn">Add Driver</button>
+                            </div>
+                            <div class="drivers-content">
+                                <div class="active-drivers">
+                                    <h3>Active Drivers</h3>
+                                    <div class="driver-list"></div>
+                                </div>
+                                <div class="driver-stats">
+                                    <h3>Performance</h3>
+                                    <div class="stats-grid"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Business Profile Section -->
+                        <section class="content-section" id="profile-section">
+                            <div class="section-header">
+                                <h2>Business Profile</h2>
+                            </div>
+                            <form id="business-profile-form" class="business-profile-form" novalidate>
+                                <div class="profile-form-container">
+                                    <div class="profile-images-section">
+                                        <div class="avatar-section">
+                                            <img id="business-profile-avatar-preview" src="images/default-avatar.svg" alt="Logo preview" class="profile-avatar-preview">
+                                            <div class="form-group">
+                                                <label for="business-logo" class="visually-hidden">Upload logo</label>
+                                                <input type="file" id="business-logo" accept="image/*">
+                                            </div>
+                                        </div>
+                                        <div class="featured-section">
+                                            <label for="business-featured" class="featured-label">Featured image</label>
+                                            <div class="featured-preview-container">
+                                                <img id="business-featured-preview" alt="Featured image preview" class="featured-preview-image">
+                                                <span id="business-featured-placeholder" class="featured-placeholder">No image selected</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="file" id="business-featured" accept="image/*">
+                                                <p class="help-text">Recommended size: 1200x600 (landscape). This will be displayed as your business cover.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="profile-fields-section">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="businessName">Business Name</label>
+                                                <input type="text" id="businessName" placeholder="e.g., The Grand Restaurant" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="businessCategory">Category</label>
+                                                <select id="businessCategory">
+                                                    <option value="Restaurant">Restaurant</option>
+                                                    <option value="Cafe">Cafe</option>
+                                                    <option value="Hotel">Hotel</option>
+                                                    <option value="Salon">Hair Salon & Beauty</option>
+                                                    <option value="Spa">Spa & Wellness</option>
+                                                    <option value="Gym">Gym & Fitness</option>
+                                                    <option value="Transport">Transportation</option>
+                                                    <option value="Health">Health & Medical</option>
+                                                    <option value="Events">Events & Entertainment</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="businessDescription">Description</label>
+                                            <textarea id="businessDescription" placeholder="Briefly describe your business..."></textarea>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="businessPhone">Phone</label>
+                                                <input type="tel" id="businessPhone" placeholder="e.g., +1 555 0123">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="businessEmail">Email</label>
+                                                <input type="email" id="businessEmail" placeholder="you@business.com">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="businessAddress">Address</label>
+                                                <input type="text" id="businessAddress" placeholder="123 Main St, City">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="businessWebsite">Website</label>
+                                                <input type="url" id="businessWebsite" placeholder="https://example.com">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="businessHours">Hours</label>
+                                            <input type="text" id="businessHours" placeholder="Mon-Fri 9:00-18:00; Sat 10:00-16:00">
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-primary">Save Profile</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ZippyBook</h4>
+                    <p>Manage your business with ease.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Centre</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 ZippyBook. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Templates and Modals -->
+    <template id="order-template">
+        <div class="order-card" role="listitem">
+            <div class="order-header">
+                <span class="order-number" aria-label="Order number">#123</span>
+                <span class="order-type" aria-label="Order type">Dine In - Table 5</span>
+                <time class="order-time" datetime="">5 mins ago</time>
+            </div>
+            <div class="order-items" role="list"></div>
+            <div class="order-actions">
+                <button class="btn btn-confirm" aria-label="Confirm order"><i class="fas fa-check"></i>Confirm</button>
+                <button class="btn btn-ready" aria-label="Mark order as ready"><i class="fas fa-bell"></i>Ready</button>
+                <button class="btn btn-complete" aria-label="Complete order"><i class="fas fa-flag-checkered"></i>Complete</button>
+            </div>
+        </div>
+    </template>
+
+    <div class="modal" id="shiftsModal" aria-labelledby="shiftsModalTitle" role="dialog">
+        <!-- ... modal content from old file ... -->
+    </div>
+    <div class="modal" id="createDeliveryModal" aria-labelledby="createDeliveryTitle" role="dialog">
+        <!-- ... modal content from old file ... -->
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="modal" id="inventoryModal" role="dialog" aria-labelledby="inventoryModalTitle" aria-modal="true">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="inventoryModalTitle">Add Inventory</h2>
+                <button class="close-modal" id="closeInventoryModal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs" role="tablist">
+                    <button class="tab active" role="tab" aria-selected="true" id="tabSingle" data-tab="single">Single Item</button>
+                    <button class="tab" role="tab" aria-selected="false" id="tabBulk" data-tab="bulk">Bulk Upload</button>
+                </div>
+
+                <div class="tab-panels">
+                    <!-- Single Item Panel -->
+                    <section class="tab-panel active" id="panelSingle" role="tabpanel" aria-labelledby="tabSingle">
+                        <form id="inventoryForm" novalidate enctype="multipart/form-data">
+                            <div class="form-grid" id="inventoryDynamicFields">
+                                <!-- dynamic fields injected by JS based on business type -->
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="flex:1;">
+                                    <label for="inv_imageFile">Image</label>
+                                    <input type="file" id="inv_imageFile" accept="image/*">
+                                </div>
+                                <div class="form-group" style="flex:1;">
+                                    <label>Preview</label>
+                                    <div style="border:1px solid var(--border-color); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:center; min-height:120px;">
+                                        <img id="inv_imagePreview" alt="Preview" style="max-height:140px; max-width:100%; object-fit:cover; display:none;">
+                                        <span id="inv_imagePlaceholder" style="color:var(--text-light); font-size:0.9rem;">No image selected</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Additional Images</label>
+                                <div class="additional-images-grid">
+                                    <div class="additional-image-slot">
+                                        <input type="file" id="inv_imageFile_1" accept="image/*" class="additional-image-input" data-index="1" style="display:none;">
+                                        <label for="inv_imageFile_1" class="additional-image-label">
+                                            <img id="inv_imagePreview_1" class="additional-image-preview" alt="Preview 1" style="display:none;">
+                                            <span id="inv_imagePlaceholder_1" class="additional-image-placeholder">+</span>
+                                        </label>
+                                    </div>
+                                    <div class="additional-image-slot">
+                                        <input type="file" id="inv_imageFile_2" accept="image/*" class="additional-image-input" data-index="2" style="display:none;">
+                                        <label for="inv_imageFile_2" class="additional-image-label">
+                                            <img id="inv_imagePreview_2" class="additional-image-preview" alt="Preview 2" style="display:none;">
+                                            <span id="inv_imagePlaceholder_2" class="additional-image-placeholder">+</span>
+                                        </label>
+                                    </div>
+                                    <div class="additional-image-slot">
+                                        <input type="file" id="inv_imageFile_3" accept="image/*" class="additional-image-input" data-index="3" style="display:none;">
+                                        <label for="inv_imageFile_3" class="additional-image-label">
+                                            <img id="inv_imagePreview_3" class="additional-image-preview" alt="Preview 3" style="display:none;">
+                                            <span id="inv_imagePlaceholder_3" class="additional-image-placeholder">+</span>
+                                        </label>
+                                    </div>
+                                    <div class="additional-image-slot">
+                                        <input type="file" id="inv_imageFile_4" accept="image/*" class="additional-image-input" data-index="4" style="display:none;">
+                                        <label for="inv_imageFile_4" class="additional-image-label">
+                                            <img id="inv_imagePreview_4" class="additional-image-preview" alt="Preview 4" style="display:none;">
+                                            <span id="inv_imagePlaceholder_4" class="additional-image-placeholder">+</span>
+                                        </label>
+                                    </div>
+                                    <div class="additional-image-slot">
+                                        <input type="file" id="inv_imageFile_5" accept="image/*" class="additional-image-input" data-index="5" style="display:none;">
+                                        <label for="inv_imageFile_5" class="additional-image-label">
+                                            <img id="inv_imagePreview_5" class="additional-image-preview" alt="Preview 5" style="display:none;">
+                                            <span id="inv_imagePlaceholder_5" class="additional-image-placeholder">+</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions" style="display:flex; gap: 0.5rem; justify-content:flex-end; margin-top:1rem;">
+                                <button type="button" class="btn" id="cancelInventoryBtn">Cancel</button>
+                                <button type="submit" class="btn btn-primary" id="saveInventoryBtn">Save Item</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Bulk Upload Panel -->
+                    <section class="tab-panel" id="panelBulk" role="tabpanel" aria-labelledby="tabBulk">
+                        <div class="form-group">
+                            <label for="bulkFile">Upload CSV file</label>
+                            <input type="file" id="bulkFile" accept=".csv,text/csv">
+                        </div>
+                        <div class="form-group">
+                            <label for="bulkTextarea">Or paste CSV here</label>
+                            <textarea id="bulkTextarea" placeholder="name,price,category,stock,sku,description,imageUrl\nBurger,9.99,Main,100,BUR001,Classic burger,https://..." rows="6"></textarea>
+                        </div>
+                        <div class="form-actions" style="display:flex; gap: 0.5rem; align-items:center; flex-wrap:wrap;">
+                            <button class="btn" id="downloadCsvTemplate" type="button">Download CSV template</button>
+                            <div style="flex:1"></div>
+                            <button class="btn btn-primary" id="previewBulkBtn" type="button">Preview</button>
+                            <button class="btn" id="clearBulkBtn" type="button">Clear</button>
+                        </div>
+                        <div class="csv-preview" id="bulkPreview" style="margin-top:1rem; display:none;">
+                            <h3 style="margin-bottom:0.5rem;">Preview</h3>
+                            <div class="table-wrapper">
+                                <table class="table" id="bulkPreviewTable" aria-label="Bulk upload preview"></table>
+                            </div>
+                            <div class="form-actions" style="display:flex; justify-content:flex-end; margin-top:0.75rem;">
+                                <button class="btn btn-primary" id="confirmBulkAddBtn" type="button">Add Items</button>
+                            </div>
+                        </div>
+                        <p class="text-light" id="bulkHelpText" style="margin-top:0.75rem; font-size: 0.9rem;">
+                            Columns depend on your business type. We'll auto-adjust headers like price/rate or duration if needed.
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <template id="clock-log-template">
+        <div class="clock-log-entry" role="row">
+            <span class="employee-name" role="cell"></span>
+            <span class="position-badge" role="cell"></span>
+            <span class="station-badge" role="cell"></span>
+            <span class="clock-time" role="cell"></span>
+            <span class="clock-type" role="cell"></span>
+        </div>
+    </template>
+    <template id="delivery-card-template">
+        <div class="delivery-card">
+            <div class="delivery-card-header">
+                <div class="delivery-info">
+                    <span class="delivery-id">#12345</span>
+                    <span class="delivery-time">12:30 PM</span>
+                </div>
+                <span class="delivery-status pending">Pending</span>
+            </div>
+            <div class="delivery-details">
+                <div class="customer-info">
+                    <i class="fas fa-user"></i>
+                    <span class="customer-name">John Doe</span>
+                </div>
+                <div class="delivery-address">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="address-text">123 Main St, City</span>
+                </div>
+                <div class="delivery-items-summary">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="items-text">3 items • $42.50</span>
+                </div>
+                <div class="delivery-priority" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>High Priority</span>
+                </div>
+            </div>
+            <div class="delivery-actions">
+                <button class="btn btn-secondary btn-assign" title="Assign Driver">
+                    <i class="fas fa-user-plus"></i> Assign
+                </button>
+                <button class="btn btn-primary btn-track" title="Track Delivery">
+                    <i class="fas fa-route"></i> Track
+                </button>
+                <button class="btn btn-success btn-complete" style="display: none;" title="Mark Complete">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+    </template>
+    <template id="driver-card-template">
+        <div class="driver-card">
+            <div class="driver-avatar">
+                <img class="driver-photo" src="images/avatars/avatar-1.svg" alt="Driver photo">
+                <span class="driver-status online"></span>
+            </div>
+            <div class="driver-info">
+                <h4 class="driver-name">Mike Johnson</h4>
+                <div class="driver-details">
+                    <span class="driver-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Downtown Area
+                    </span>
+                    <span class="driver-rating">
+                        <i class="fas fa-star"></i>
+                        4.8
+                    </span>
+                </div>
+            </div>
+            <div class="driver-metrics">
+                <div class="metric">
+                    <span class="metric-value deliveries-count">5</span>
+                    <span class="metric-label">Today</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value avg-time">24min</span>
+                    <span class="metric-label">Avg</span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/business-dashboard.js" type="module"></script>
+    <script src="js/storage-debug.js" type="module"></script>
+        <script>
+            // Header dropdown + mobile menu behavior to match index.html
+            (function () {
+                const $ = (s, c = document) => c.querySelector(s);
+                const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+
+                // Mobile menu toggle
+                const menuBtn = $('.menu-toggle');
+                const navList = $('.nav-list');
+                menuBtn?.addEventListener('click', () => {
+                    navList?.classList.toggle('active');
+                    menuBtn.classList.toggle('active');
+                });
+
+                // Account dropdown toggle
+                const accountDropdown = $('#accountDropdown');
+                function closeDropdown() { accountDropdown?.classList.remove('open'); }
+                        accountDropdown?.addEventListener('click', (e) => {
+                    const link = e.target.closest('a');
+                    if (!link) return;
+                    const id = link.id;
+                    if (id === 'nav-logout') {
+                                e.preventDefault();
+                        try { localStorage.removeItem('userRole'); } catch (_) {}
+                        try { sessionStorage.removeItem('zippybook.role'); } catch (_) {}
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                    // Toggle or follow normal link
+                    if (link.classList.contains('dropdown-toggle')) {
+                                e.preventDefault();
+                        accountDropdown.classList.toggle('open');
+                    } else {
+                        closeDropdown();
+                                // allow normal navigation for other links
+                    }
+                });
+                document.addEventListener('click', (e) => {
+                    if (accountDropdown && !e.target.closest('#accountDropdown')) closeDropdown();
+                });
+
+                // Auth UI: dashboards are protected, so mark as authenticated and set avatar/name
+                document.body.classList.add('authenticated');
+                const avatars = [
+                    'images/avatars/avatar-1.svg',
+                    'images/avatars/avatar-2.svg',
+                    'images/avatars/avatar-3.svg',
+                    'images/avatars/avatar-4.svg',
+                    'images/avatars/avatar-5.svg',
+                    'images/avatars/avatar-6.svg',
+                    'images/default-avatar.svg'
+                ];
+                const pick = () => avatars[Math.floor(Math.random() * avatars.length)];
+                const avatarEl = accountDropdown?.querySelector('.avatar-small');
+                if (avatarEl) avatarEl.src = pick();
+                const usernameEl = accountDropdown?.querySelector('.username');
+                if (usernameEl) {
+                    const name = localStorage.getItem('businessName') || 'Business';
+                    usernameEl.textContent = name;
+                }
+            })();
+        </script>
+    <script>
+      (function () {
+        const $ = (s, c = document) => c.querySelector(s);
+        const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+
+        function showSection(sectionId) {
+          $$('.content-section').forEach(sec => {
+            sec.classList.toggle('active', sec.id === sectionId);
+          });
+          $$('.dashboard-nav .nav-btn').forEach(btn => {
+            const target = `${btn.getAttribute('data-section')}-section`;
+            const active = target === sectionId;
+            btn.classList.toggle('active', active);
+          });
+          try { history.replaceState({}, '', `#${sectionId.replace('-section','')}`); } catch (_) {}
+          document.dispatchEvent(new CustomEvent('dashboard:sectionchange', { detail: { section: sectionId } }));
+        }
+
+                // Theme toggle removed; default to light theme
+                function initTheme() {
+                    const root = document.documentElement;
+                    root.setAttribute('data-theme', 'light');
+                    try { localStorage.removeItem('zippybook.theme'); } catch (_) {}
+                }
+
+        function initNav() {
+          $$('.dashboard-nav .nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const id = btn.getAttribute('data-section');
+              if (id) showSection(`${id}-section`);
+            });
+          });
+          const hash = (location.hash || '#orders').replace('#','');
+          const targetId = `${hash}-section`;
+          if ($(`#${targetId}`)) {
+            showSection(targetId);
+          } else {
+            showSection('orders-section');
+          }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+          initTheme();
+          initNav();
+        });
+      })();
+    </script>
+</body>
+</html>

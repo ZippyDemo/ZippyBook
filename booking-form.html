@@ -1,0 +1,44 @@
+<div class="booking-section">
+    <h3>Delivery Options</h3>
+    <div class="booking-delivery-options">
+        <div class="delivery-option-select">
+            <div class="delivery-type-card" data-type="pickup">
+                <i class="fas fa-store"></i>
+                <h4>Pickup</h4>
+                <p>Pick up from store</p>
+                <span class="delivery-fee">Free</span>
+            </div>
+            <div class="delivery-type-card" data-type="standard">
+                <i class="fas fa-truck"></i>
+                <h4>Standard Delivery</h4>
+                <p>2-3 hours</p>
+                <span class="delivery-fee">$5.99</span>
+            </div>
+            <div class="delivery-type-card" data-type="express">
+                <i class="fas fa-rocket"></i>
+                <h4>Express Delivery</h4>
+                <p>45-60 minutes</p>
+                <span class="delivery-fee">$9.99</span>
+            </div>
+        </div>
+        
+        <div class="delivery-address-section" id="deliveryAddressSection">
+            <h4>Delivery Address</h4>
+            <div class="saved-addresses">
+                <select id="savedAddressSelect" class="form-control">
+                    <option value="">Select saved address</option>
+                </select>
+                <button type="button" class="btn btn-outline" id="addNewAddress">
+                    <i class="fas fa-plus"></i> Add New Address
+                </button>
+            </div>
+            
+            <div class="delivery-notes">
+                <label for="deliveryInstructions">Delivery Instructions (Optional)</label>
+                <textarea id="deliveryInstructions" 
+                          placeholder="Add any special instructions for delivery"
+                          class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
