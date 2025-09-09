@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZippyBook - Delivery Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="images/zippy-icon.svg">
+  <link rel="stylesheet" href="css/delivery-dashboard.css">
+  <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="dashboard-nav">
+            <div class="delivery-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="newOrders">0</span>
+                    <span class="stat-label">New Orders</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="inProgress">0</span>
+                    <span class="stat-label">In Progress</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="readyForPickup">0</span>
+                    <span class="stat-label">Ready for Pickup</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="inTransit">0</span>
+                    <span class="stat-label">In Transit</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="delivery-content">
+            <div class="delivery-header">
+                <h1>Delivery Orders</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="createOrderBtn">
+                        <i class="fas fa-plus"></i> New Order
+                    </button>
+                    <div class="search-box">
+                        <input type="search" placeholder="Search orders..." id="orderSearch">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="delivery-grid">
+                <!-- Order Columns -->
+                <div class="order-column" data-status="new">
+                    <div class="column-header">
+                        <h3>New Orders</h3>
+                        <span class="order-count">0</span>
+                    </div>
+                    <div class="order-list" id="newOrdersList">
+                        <!-- New orders will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <div class="order-column" data-status="preparing">
+                    <div class="column-header">
+                        <h3>Preparing</h3>
+                        <span class="order-count">0</span>
+                    </div>
+                    <div class="order-list" id="preparingOrdersList">
+                        <!-- Orders in preparation will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <div class="order-column" data-status="ready">
+                    <div class="column-header">
+                        <h3>Ready for Pickup</h3>
+                        <span class="order-count">0</span>
+                    </div>
+                    <div class="order-list" id="readyOrdersList">
+                        <!-- Ready orders will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <div class="order-column" data-status="in-transit">
+                    <div class="column-header">
+                        <h3>In Transit</h3>
+                        <span class="order-count">0</span>
+                    </div>
+                    <div class="order-list" id="transitOrdersList">
+                        <!-- In-transit orders will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="delivery-sidebar">
+            <div class="drivers-panel">
+                <h3>Active Drivers</h3>
+                <div class="drivers-list" id="activeDriversList">
+                    <!-- Active drivers will be dynamically inserted here -->
+                </div>
+            </div>
+            <div class="delivery-map" id="deliveryMap">
+                <!-- Map will be dynamically inserted here -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Order Card Template -->
+    <template id="order-card-template">
+        <div class="order-card" draggable="true" 
+             data-order-id="" data-pickup-lat="" data-pickup-lng=""
+             data-dropoff-lat="" data-dropoff-lng=""
+             data-pickup-address="" data-dropoff-address="">
+            <div class="order-header">
+                <span class="order-id"></span>
+                <span class="order-time"></span>
+            </div>
+            <div class="order-content">
+                <div class="customer-info">
+                    <h4 class="customer-name"></h4>
+                    <p class="delivery-address"></p>
+                </div>
+                <div class="order-items"></div>
+                <div class="order-total"></div>
+            </div>
+
+            <!-- New: Locations panel for pickup and dropoff -->
+            <div class="order-locations">
+                <div class="loc-row pickup">
+                    <i class="fas fa-store"></i>
+                    <div class="loc-meta">
+                        <div class="loc-label">Pickup</div>
+                        <div class="loc-address pickup-address">Loading address…</div>
+                    </div>
+                    <div class="loc-actions">
+                        <button class="btn btn-xs" data-action="copy-pickup" title="Copy pickup address">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <a class="btn btn-xs" data-action="open-pickup" target="_blank" rel="noopener" title="Open pickup in Maps">
+                            <i class="fas fa-location-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="loc-row dropoff">
+                    <i class="fas fa-location-dot"></i>
+                    <div class="loc-meta">
+                        <div class="loc-label">Dropoff</div>
+                        <div class="loc-address dropoff-address">Loading address…</div>
+                    </div>
+                    <div class="loc-actions">
+                        <button class="btn btn-xs" data-action="copy-dropoff" title="Copy dropoff address">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <a class="btn btn-xs" data-action="open-dropoff" target="_blank" rel="noopener" title="Open dropoff in Maps">
+                            <i class="fas fa-location-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-footer">
+                <select class="driver-select">
+                    <option value="">Assign Driver</option>
+                </select>
+                <div class="order-actions">
+                    <button class="btn btn-sm" data-action="edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm" data-action="track">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </button>
+                    <button class="btn btn-sm" data-action="approve">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <!-- New: open Google Maps directions (origin driver → pickup → dropoff) -->
+                    <button class="btn btn-sm" data-action="navigate" title="Open navigation in Google Maps">
+                        <i class="fas fa-route"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/delivery-dashboard.js" type="module"></script>
+    <!-- Auto-assign to nearest driver + Google Maps routing on approval -->
+    <script>
+      (function () {
+        const $ = (s, c = document) => c.querySelector(s);
+        const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+
+        let gmap, directionsService, directionsRenderer, geocoder;
+
+        function ensureMap() {
+          if (!window.google || !google.maps) return false;
+          if (!gmap) {
+            const el = $('#deliveryMap');
+            if (!el) return false;
+            gmap = new google.maps.Map(el, { zoom: 13, center: { lat: 0, lng: 0 } });
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({ map: gmap, suppressMarkers: false });
+            geocoder = new google.maps.Geocoder();
+          }
+          return true;
+        }
+
+        function toNumber(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; }
+
+        function getOrderCoords(card) {
+          const pLat = toNumber(card.dataset.pickupLat);
+          const pLng = toNumber(card.dataset.pickupLng);
+          const dLat = toNumber(card.dataset.dropoffLat);
+          const dLng = toNumber(card.dataset.dropoffLng);
+          if ([pLat,pLng,dLat,dLng].some(v => v === null)) return null;
+          return { pickup: { lat: pLat, lng: pLng }, dropoff: { lat: dLat, lng: dLng } };
+        }
+
+        function getDrivers() {
+          // Expect driver items with: data-driver-id, data-lat, data-lng
+          return $$('#activeDriversList [data-driver-id]').map(el => {
+            const id = el.dataset.driverId;
+            const name = el.querySelector('.driver-name')?.textContent?.trim() || id;
+            const lat = toNumber(el.dataset.lat);
+            const lng = toNumber(el.dataset.lng);
+            return (lat !== null && lng !== null) ? { id, name, lat, lng, el } : null;
+          }).filter(Boolean);
+        }
+
+        function haversine(a, b) {
+          const R = 6371e3;
+          const toRad = deg => deg * Math.PI / 180;
+          const dLat = toRad(b.lat - a.lat);
+          const dLng = toRad(b.lng - a.lng);
+          const lat1 = toRad(a.lat);
+          const lat2 = toRad(b.lat);
+          const x = Math.sin(dLat/2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng/2) ** 2;
+          return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+        }
+
+        function findNearestDriver(pickup, drivers) {
+          if (!drivers.length) return null;
+          let best = drivers[0], bestD = haversine(pickup, best);
+          for (let i = 1; i < drivers.length; i++) {
+            const d = haversine(pickup, drivers[i]);
+            if (d < bestD) { best = drivers[i]; bestD = d; }
+          }
+          return best;
+        }
+
+        function populateDriverSelect(select, drivers) {
+          if (!select) return;
+          if (select.options.length <= 1) {
+            const frag = document.createDocumentFragment();
+            drivers.forEach(d => {
+              const opt = document.createElement('option');
+              opt.value = d.id;
+              opt.textContent = d.name || d.id;
+              frag.appendChild(opt);
+            });
+            select.appendChild(frag);
+          }
+        }
+
+        function latLngToString(pos) { return `${pos.lat},${pos.lng}`; }
+        function placeLink(pos) { return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(latLngToString(pos))}`; }
+        function routeLink(origin, waypoint, destination) {
+          const params = new URLSearchParams({ api: '1', destination: latLngToString(destination) });
+          if (origin) params.set('origin', latLngToString(origin));
+          if (waypoint) params.set('waypoints', latLngToString(waypoint));
+          return `https://www.google.com/maps/dir/?${params.toString()}`;
+        }
+
+        function setAddressEl(el, text, fallback) {
+          if (!el) return;
+          el.textContent = text || fallback || '';
+        }
+
+        function reverseGeocode(pos) {
+          return new Promise((resolve) => {
+            if (!geocoder) { ensureMap(); }
+            if (!geocoder) return resolve(null);
+            geocoder.geocode({ location: pos }, (res, status) => {
+              if (status === 'OK' && res && res[0]) resolve(res[0].formatted_address);
+              else resolve(null);
+            });
+          });
+        }
+
+        async function updateOrderLocationInfo(card) {
+          const coords = getOrderCoords(card);
+          if (!coords) return;
+
+          // Driver origin (optional)
+          const driver = getSelectedDriver(card);
+          const origin = (driver && Number.isFinite(driver.lat) && Number.isFinite(driver.lng)) ? { lat: driver.lat, lng: driver.lng } : null;
+
+          // Links for single places
+          const pickupOpen = card.querySelector('[data-action="open-pickup"]');
+          const dropoffOpen = card.querySelector('[data-action="open-dropoff"]');
+          if (pickupOpen) pickupOpen.href = placeLink(coords.pickup);
+          if (dropoffOpen) dropoffOpen.href = placeLink(coords.dropoff);
+
+          // Build route link for navigate button (opened via window.open)
+          card.__navigateUrl = routeLink(origin, coords.pickup, coords.dropoff);
+
+          // Addresses: use cached data-* first, else reverse geocode and cache
+          const pickupAddrEl = card.querySelector('.pickup-address');
+          const dropoffAddrEl = card.querySelector('.dropoff-address');
+
+          let pickupAddress = (card.dataset.pickupAddress || '').trim();
+          let dropoffAddress = (card.dataset.dropoffAddress || '').trim();
+
+          if (!pickupAddress) {
+            pickupAddress = await reverseGeocode(coords.pickup) || latLngToString(coords.pickup);
+            card.dataset.pickupAddress = pickupAddress;
+          }
+          if (!dropoffAddress) {
+            dropoffAddress = await reverseGeocode(coords.dropoff) || latLngToString(coords.dropoff);
+            card.dataset.dropoffAddress = dropoffAddress;
+          }
+
+          setAddressEl(pickupAddrEl, pickupAddress, latLngToString(coords.pickup));
+          setAddressEl(dropoffAddrEl, dropoffAddress, latLngToString(coords.dropoff));
+        }
+
+        function autoAssignNearest(card) {
+          const coords = getOrderCoords(card);
+          if (!coords) return;
+          const drivers = getDrivers();
+          if (!drivers.length) return;
+
+          const nearest = findNearestDriver(coords.pickup, drivers);
+          if (!nearest) return;
+
+          const select = card.querySelector('.driver-select');
+          populateDriverSelect(select, drivers);
+          if (select && select.value !== nearest.id) {
+            select.value = nearest.id;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+
+          const orderId = card.dataset.orderId || card.querySelector('.order-id')?.textContent?.trim();
+          document.dispatchEvent(new CustomEvent('order:assigned', {
+            detail: { orderId, driverId: nearest.id }
+          }));
+          if (window.io) {
+            try { io().emit('order:assigned', { orderId, driverId: nearest.id }); } catch(_) {}
+          }
+
+          // Ensure location info is visible and updated
+          updateOrderLocationInfo(card);
+        }
+
+        function getSelectedDriver(card) {
+          const select = card.querySelector('.driver-select');
+          const id = select?.value;
+          if (!id) return null;
+          return getDrivers().find(d => d.id === id) || null;
+        }
+
+        function drawRoute({ origin, waypoint, destination }) {
+          if (!ensureMap()) return;
+          const req = {
+            origin,
+            destination,
+            travelMode: google.maps.TravelMode.DRIVING,
+            waypoints: waypoint ? [{ location: waypoint, stopover: true }] : [],
+            optimizeWaypoints: false
+          };
+          directionsService.route(req, (result, status) => {
+            if (status === 'OK') {
+              directionsRenderer.setDirections(result);
+              const leg = result.routes?.[0]?.legs?.[0];
+              if (leg?.start_location) gmap.setCenter(leg.start_location);
+            } else {
+              console.warn('Directions request failed:', status);
+            }
+          });
+        }
+
+        function onApprove(card) {
+          const coords = getOrderCoords(card);
+          if (!coords) return;
+          const driver = getSelectedDriver(card);
+
+          const proceed = (driverPos) => {
+            drawRoute({
+              origin: driverPos || coords.pickup,
+              waypoint: coords.pickup,
+              destination: coords.dropoff
+            });
+            const orderId = card.dataset.orderId || card.querySelector('.order-id')?.textContent?.trim();
+            document.dispatchEvent(new CustomEvent('order:approved', {
+              detail: { orderId, driverId: driver?.id || null }
+            }));
+            if (window.io) {
+              try { io().emit('order:approved', { orderId, driverId: driver?.id || null }); } catch(_) {}
+            }
+          };
+
+          if (driver && Number.isFinite(driver.lat) && Number.isFinite(driver.lng)) {
+            proceed({ lat: driver.lat, lng: driver.lng });
+          } else if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              pos => proceed({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+              ()  => proceed(null),
+              { enableHighAccuracy: true, timeout: 5000 }
+            );
+          } else {
+            proceed(null);
+          }
+        }
+
+        function findCardByOrderId(orderId) {
+          if (!orderId) return null;
+          let card = document.querySelector(`.order-card[data-order-id="${CSS.escape(orderId)}"]`);
+          if (card) return card;
+          return Array.from(document.querySelectorAll('.order-card')).find(c =>
+            (c.querySelector('.order-id')?.textContent?.trim() || '') === orderId
+          ) || null;
+        }
+
+        function copyToClipboard(text) {
+          if (!text) return;
+          if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(text).catch(() => {});
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch(_) {}
+            document.body.removeChild(ta);
+          }
+        }
+
+        function observeOrders() {
+          // Initialize existing cards
+          $$('.order-card').forEach(card => {
+            if (!card.__autoAssigned) {
+              card.__autoAssigned = true;
+              autoAssignNearest(card);
+            } else {
+              updateOrderLocationInfo(card);
+            }
+          });
+
+          // Observe future cards
+          const grid = $('.delivery-grid');
+          if (!grid) return;
+          const mo = new MutationObserver(muts => {
+            muts.forEach(m => {
+              m.addedNodes.forEach(node => {
+                if (!(node instanceof HTMLElement)) return;
+                if (node.matches?.('.order-card')) {
+                  if (!node.__autoAssigned) {
+                    node.__autoAssigned = true;
+                    autoAssignNearest(node);
+                  } else {
+                    updateOrderLocationInfo(node);
+                  }
+                }
+                node.querySelectorAll?.('.order-card').forEach(card => {
+                  if (!card.__autoAssigned) {
+                    card.__autoAssigned = true;
+                    autoAssignNearest(card);
+                  } else {
+                    updateOrderLocationInfo(card);
+                  }
+                });
+              });
+            });
+          });
+          mo.observe(grid, { childList: true, subtree: true });
+        }
+
+        function wireInteractions() {
+          document.addEventListener('change', (e) => {
+            const select = e.target.closest('.driver-select');
+            if (!select) return;
+            const card = select.closest('.order-card');
+            const orderId = card?.dataset.orderId || card?.querySelector('.order-id')?.textContent?.trim();
+            document.dispatchEvent(new CustomEvent('order:reassigned', {
+              detail: { orderId, driverId: select.value || null }
+            }));
+            if (window.io) {
+              try { io().emit('order:reassigned', { orderId, driverId: select.value || null }); } catch(_) {}
+            }
+            // Update navigation origin based on new driver
+            updateOrderLocationInfo(card);
+          });
+
+          document.addEventListener('click', (e) => {
+            const approveBtn = e.target.closest('[data-action="approve"]');
+            if (approveBtn) {
+              const card = approveBtn.closest('.order-card');
+              if (card) onApprove(card);
+              return;
+            }
+            const trackBtn = e.target.closest('[data-action="track"]');
+            if (trackBtn) {
+              const card = trackBtn.closest('.order-card');
+              const coords = card && getOrderCoords(card);
+              if (coords) {
+                drawRoute({ origin: coords.pickup, destination: coords.dropoff });
+              }
+              return;
+            }
+            const navBtn = e.target.closest('[data-action="navigate"]');
+            if (navBtn) {
+              const card = navBtn.closest('.order-card');
+              const url = card && card.__navigateUrl;
+              if (url) window.open(url, '_blank', 'noopener');
+              return;
+            }
+            const copyPickup = e.target.closest('[data-action="copy-pickup"]');
+            if (copyPickup) {
+              const card = copyPickup.closest('.order-card');
+              const addr = card?.dataset.pickupAddress || card?.querySelector('.pickup-address')?.textContent?.trim();
+              copyToClipboard(addr);
+              return;
+            }
+            const copyDrop = e.target.closest('[data-action="copy-dropoff"]');
+            if (copyDrop) {
+              const card = copyDrop.closest('.order-card');
+              const addr = card?.dataset.dropoffAddress || card?.querySelector('.dropoff-address')?.textContent?.trim();
+              copyToClipboard(addr);
+              return;
+            }
+          });
+
+          // Keep UI in sync if external code assigns/reassigns via events
+          document.addEventListener('order:assigned', (e) => {
+            const card = findCardByOrderId(e.detail?.orderId);
+            if (card) updateOrderLocationInfo(card);
+          });
+          document.addEventListener('order:reassigned', (e) => {
+            const card = findCardByOrderId(e.detail?.orderId);
+            if (card) updateOrderLocationInfo(card);
+          });
+        }
+
+        function init() {
+          if (!window.google || !google.maps) {
+            setTimeout(init, 300);
+            return;
+          }
+          observeOrders();
+          wireInteractions();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+      })();
+    </script>
+    <!-- Optional: role guard (safe no-op if not desired) -->
+    <script>
+      (function () {
+        document.addEventListener('DOMContentLoaded', function () {
+          var role = null;
+          try { role = sessionStorage.getItem('zippybook.role'); } catch (_) {}
+          // if (role !== 'driver') { window.location.replace('index.html'); }
+        });
+      })();
+    </script>
+</body>
+</html>

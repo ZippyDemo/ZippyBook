@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZippyBook - Driver Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="images/zippy-icon.svg">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="driver-dashboard" class="dashboard-container">
+        <header class="dashboard-header">
+            <h1><i class="fas fa-motorcycle"></i> Driver Dashboard</h1>
+            <div class="header-actions">
+                <a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+                <button id="driverLogout" class="btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <section class="map-panel">
+                <h3><i class="fas fa-map"></i> Current Area</h3>
+                <div id="delivery-map" style="width:100%;height:320px;border-radius:12px;background:#f3f4f6;"></div>
+            </section>
+
+            <section class="dashboard-content">
+                <h3><i class="fas fa-box"></i> Assigned Deliveries</h3>
+                <div class="driver-deliveries"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Card template used by js/driver-dashboard.js -->
+    <template id="delivery-card-template">
+        <div class="delivery-card" data-id="">
+            <div class="card-header">
+                <div class="customer-name"></div>
+                <div class="delivery-status badge">New</div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="label">Delivery address</div>
+                        <div class="delivery-address"></div>
+                    </div>
+                    <div class="col">
+                        <div class="label">Phone</div>
+                        <div class="phone-number"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="label">Pickup time</div>
+                        <div class="pickup-time"></div>
+                    </div>
+                    <div class="col">
+                        <div class="label">ETA</div>
+                        <div class="estimated-delivery"></div>
+                    </div>
+                </div>
+
+                <div class="order-locations">
+                    <div class="loc-row pickup">
+                        <i class="fas fa-store"></i>
+                        <div class="loc-meta">
+                            <div class="loc-label">Pickup</div>
+                            <div class="pickup-address">Loading address…</div>
+                        </div>
+                        <div class="loc-actions">
+                            <button class="btn btn-xs" data-action="copy-pickup" title="Copy pickup address"><i class="fas fa-copy"></i></button>
+                            <a class="btn btn-xs" data-action="open-pickup" target="_blank" rel="noopener" title="Open pickup in Maps"><i class="fas fa-location-arrow"></i></a>
+                        </div>
+                    </div>
+                    <div class="loc-row dropoff">
+                        <i class="fas fa-location-dot"></i>
+                        <div class="loc-meta">
+                            <div class="loc-label">Dropoff</div>
+                            <div class="dropoff-address">Loading address…</div>
+                        </div>
+                        <div class="loc-actions">
+                            <button class="btn btn-xs" data-action="copy-dropoff" title="Copy dropoff address"><i class="fas fa-copy"></i></button>
+                            <a class="btn btn-xs" data-action="open-dropoff" target="_blank" rel="noopener" title="Open dropoff in Maps"><i class="fas fa-location-arrow"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-navigate"><i class="fas fa-route"></i> Navigate</button>
+            </div>
+        </div>
+    </template>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="js/driver-dashboard.js"></script>
+    <script>
+      // Lightweight logout wiring for this page
+      document.getElementById('driverLogout')?.addEventListener('click', async () => {
+        try {
+          const mod = await import('./js/supabase.js');
+          await mod.supabase.auth.signOut();
+        } catch (_) {}
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
+        try { sessionStorage.removeItem('zippybook.role'); } catch (_) {}
+        window.location.href = 'index.html';
+      });
+    </script>
+</body>
+    
+</html>
