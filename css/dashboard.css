@@ -1,0 +1,107 @@
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    background: var(--bg-color);
+}
+
+.role-dashboard {
+    display: none;
+    width: 100%;
+}
+
+.role-dashboard.active {
+    display: flex;
+}
+
+.dashboard-nav {
+    width: 280px;
+    background: var(--surface-color);
+    padding: 1rem;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.dashboard-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Role-specific styles */
+#delivery-map {
+    height: 300px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.status-toggle {
+    margin-top: 1rem;
+}
+
+.badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+/* Driver: location panel styles */
+.order-locations { 
+    display: block; 
+    margin: 0.75rem 0 1rem; 
+    border-top: 1px solid var(--border-color); 
+    padding-top: 0.5rem; 
+}
+.order-locations .loc-row { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    margin: 0.25rem 0; 
+}
+.order-locations .loc-meta { flex: 1; }
+.order-locations .loc-label { 
+    font-size: 0.8rem; 
+    color: var(--muted-text-color, #6b7280); 
+}
+.order-locations .loc-address { 
+    font-weight: 500; 
+}
+.order-locations .loc-actions .btn.btn-xs { 
+    padding: 0.25rem 0.4rem; 
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-nav { width: 240px; }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container { flex-direction: column; height: auto; }
+    .dashboard-nav { width: 100%; position: sticky; top: 0; z-index: 5; }
+    .dashboard-content { padding: 1rem; }
+}
