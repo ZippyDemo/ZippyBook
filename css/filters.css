@@ -1,0 +1,36 @@
+.sub-options {
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.delivery-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.delivery-toggle input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.toggle-label i {
+    margin-right: 3px;
+    color: #ff6b6b;
+}
+
+.restaurant-filters {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.delivery-option {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.delivery-option i {
+    margin-right: 5px;
+    color: #ff6b6b;
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Default User Avatar</title>
+  <desc id="desc">A simple circular user silhouette used as a placeholder avatar.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7F9CF5"/>
+      <stop offset="100%" stop-color="#4C51BF"/>
+    </linearGradient>
+    <clipPath id="circle-clip">
+      <circle cx="64" cy="64" r="60"/>
+    </clipPath>
+  </defs>
+  <!-- Outer circle -->
+  <circle cx="64" cy="64" r="64" fill="#EDF2F7"/>
+  <!-- Inner circle background -->
+  <g clip-path="url(#circle-clip)">
+    <rect x="4" y="4" width="120" height="120" rx="60" fill="url(#bg)"/>
+    <!-- Silhouette -->
+    <g fill="#E2E8F0" opacity="0.95">
+      <!-- Head -->
+      <circle cx="64" cy="52" r="20"/>
+      <!-- Shoulders/body -->
+      <path d="M20 112c0-22.091 19.909-34 44-34s44 11.909 44 34v8H20v-8z"/>
+    </g>
+  </g>
+</svg>

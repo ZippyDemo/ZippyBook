@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZippyBook - Driver Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="images/zippy-icon.svg">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/driver-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="driver-dashboard" class="modern-dashboard">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <h1 class="brand-title">Driver Hub</h1>
+            </div>
+            
+            <div class="nav-status">
+                <div class="online-indicator">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="nav-btn" id="theme-toggle" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="index.html" class="nav-btn" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button id="driverLogout" class="nav-btn logout-btn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-main">
+            <!-- Stats Overview -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card earnings">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Today's Earnings</h3>
+                            <p class="stat-value">$0.00</p>
+                            <span class="stat-change positive">+12%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card deliveries">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Deliveries</h3>
+                            <p class="stat-value">0</p>
+                            <span class="stat-change">Active orders</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card rating">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Rating</h3>
+                            <p class="stat-value">4.9</p>
+                            <span class="stat-change positive">+0.1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card time">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Online Time</h3>
+                            <p class="stat-value">0h 0m</p>
+                            <span class="stat-change">Today</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map and Deliveries Section -->
+            <section class="content-grid">
+                <!-- Map Panel -->
+                <div class="map-container">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-map-marked-alt"></i> Live Map</h2>
+                        <div class="map-controls">
+                            <button class="control-btn" id="center-location" title="Center on my location">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                            <button class="control-btn" id="toggle-traffic" title="Toggle traffic">
+                                <i class="fas fa-road"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="delivery-map" class="map-widget"></div>
+                </div>
+
+                <!-- Deliveries Panel -->
+                <div class="deliveries-container">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-clipboard-list"></i> Active Deliveries</h2>
+                        <div class="delivery-filter">
+                            <select class="filter-select">
+                                <option value="all">All Orders</option>
+                                <option value="pending">Pending</option>
+                                <option value="picked-up">Picked Up</option>
+                                <option value="in-transit">In Transit</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="driver-deliveries"></div>
+                    
+                    <!-- Empty State -->
+                    <div class="empty-state" id="empty-deliveries">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3>No active deliveries</h3>
+                        <p>New delivery requests will appear here automatically</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modern Card template used by js/driver-dashboard.js -->
+    <template id="delivery-card-template">
+        <div class="delivery-card modern-card" data-id="">
+            <div class="card-header">
+                <div class="customer-info">
+                    <div class="customer-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="customer-details">
+                        <h4 class="customer-name"></h4>
+                        <span class="order-id">Order #<span class="order-number"></span></span>
+                    </div>
+                </div>
+                <div class="delivery-status badge">New</div>
+            </div>
+            
+            <div class="card-body">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span class="phone-number"></span>
+                        <button class="action-btn" title="Call customer">
+                            <i class="fas fa-phone-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="time-info">
+                    <div class="time-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="label">Pickup Time</span>
+                            <span class="pickup-time"></span>
+                        </div>
+                    </div>
+                    <div class="time-item">
+                        <i class="fas fa-timer"></i>
+                        <div>
+                            <span class="label">ETA</span>
+                            <span class="estimated-delivery"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="route-info">
+                    <div class="location-step pickup-step">
+                        <div class="step-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-label">Pickup Location</div>
+                            <div class="pickup-address">Loading address…</div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="action-btn" data-action="copy-pickup" title="Copy address">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a class="action-btn" data-action="open-pickup" target="_blank" rel="noopener" title="Open in Maps">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="route-line"></div>
+                    
+                    <div class="location-step dropoff-step">
+                        <div class="step-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-label">Delivery Address</div>
+                            <div class="dropoff-address delivery-address">Loading address…</div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="action-btn" data-action="copy-dropoff" title="Copy address">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a class="action-btn" data-action="open-dropoff" target="_blank" rel="noopener" title="Open in Maps">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <button class="btn-navigate primary-btn">
+                    <i class="fas fa-route"></i>
+                    <span>Start Navigation</span>
+                </button>
+                <div class="card-actions">
+                    <button class="action-btn" title="More options">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="js/driver-dashboard.js"></script>
+    <script>
+      // Lightweight logout wiring for this page
+      document.getElementById('driverLogout')?.addEventListener('click', async () => {
+        try {
+          const mod = await import('./js/supabase.js');
+          await mod.supabase.auth.signOut();
+        } catch (_) {}
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
+        try { sessionStorage.removeItem('zippybook.role'); } catch (_) {}
+        window.location.href = 'index.html';
+      });
+    </script>
+</body>
+    
+</html>
