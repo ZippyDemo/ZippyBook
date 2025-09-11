@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Inventory Images - ZippyBook</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #6366f1;
+        }
+        .error { border-left-color: #ef4444; background: #fef2f2; }
+        .success { border-left-color: #10b981; background: #f0fdf4; }
+        .warning { border-left-color: #f59e0b; background: #fffbeb; }
+        .inventory-item {
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 15px;
+        }
+        .item-image {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        .item-details h3 {
+            margin: 0 0 10px 0;
+            color: #374151;
+        }
+        .item-meta {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .test-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background: #5b5bd6;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .image-test {
+            display: inline-block;
+            margin: 5px;
+            text-align: center;
+        }
+        .image-test img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        .image-test .status {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Inventory Images Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h2>1. Supabase Configuration Check</h2>
+        <div id="supabase-config"></div>
+        <button class="test-btn" onclick="testSupabaseConnection()">Test Supabase Connection</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>2. Storage Bucket Check</h2>
+        <div id="bucket-check"></div>
+        <button class="test-btn" onclick="testStorageBuckets()">Check Storage Buckets</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>3. Current Inventory Items</h2>
+        <div id="inventory-items"></div>
+        <button class="test-btn" onclick="loadInventoryDebug()">Load & Analyze Inventory</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>4. Image URL Tests</h2>
+        <div id="image-tests"></div>
+        <button class="test-btn" onclick="testImageUrls()">Test All Image URLs</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>5. Upload Test</h2>
+        <input type="file" id="test-upload" accept="image/*" onchange="testImageUpload(event)">
+        <div id="upload-test-result"></div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabase.js';
+        import { 
+            fetchInventory, 
+            uploadInventoryImage, 
+            getInventoryFileUrl,
+            getCurrentUserOrThrow 
+        } from './js/supabase.js';
+
+        window.supabase = supabase;
+        window.fetchInventory = fetchInventory;
+        window.uploadInventoryImage = uploadInventoryImage;
+        window.getInventoryFileUrl = getInventoryFileUrl;
+        window.getCurrentUserOrThrow = getCurrentUserOrThrow;
+
+        // Helper functions
+        window.debugLog = (message, type = 'info') => {
+            console.log(`[DEBUG] ${message}`);
+            return `<div class="debug-item ${type}">${message}</div>`;
+        };
+
+        window.testSupabaseConnection = async () => {
+            const container = document.getElementById('supabase-config');
+            let html = '';
+            
+            try {
+                html += debugLog('✅ Supabase client initialized', 'success');
+                html += debugLog(`🔗 URL: ${supabase.supabaseUrl}`, 'info');
+                
+                // Test authentication
+                const { data, error } = await supabase.auth.getUser();
+                if (error) {
+                    html += debugLog(`❌ Auth Error: ${error.message}`, 'error');
+                } else if (data.user) {
+                    html += debugLog(`✅ User authenticated: ${data.user.email}`, 'success');
+                    html += debugLog(`🆔 User ID: ${data.user.id}`, 'info');
+                } else {
+                    html += debugLog('⚠️ User not authenticated', 'warning');
+                }
+            } catch (err) {
+                html += debugLog(`❌ Connection failed: ${err.message}`, 'error');
+            }
+            
+            container.innerHTML = html;
+        };
+
+        window.testStorageBuckets = async () => {
+            const container = document.getElementById('bucket-check');
+            let html = '';
+            
+            try {
+                // Test inventory-images bucket
+                const testFile = new Blob(['test'], { type: 'text/plain' });
+                const testPath = `test_${Date.now()}.txt`;
+                
+                const storage = supabase.storage.from('inventory-images');
+                const { error: uploadError } = await storage.upload(testPath, testFile);
+                
+                if (uploadError) {
+                    html += debugLog(`❌ Bucket "inventory-images": ${uploadError.message}`, 'error');
+                    
+                    // Provide specific guidance
+                    if (uploadError.message.includes('not found')) {
+                        html += debugLog('💡 Solution: Create "inventory-images" bucket in Supabase Storage', 'warning');
+                    } else if (uploadError.message.includes('permission') || uploadError.message.includes('RLS')) {
+                        html += debugLog('💡 Solution: Update Storage policies to allow authenticated users to INSERT', 'warning');
+                    }
+                } else {
+                    html += debugLog('✅ Bucket "inventory-images" accessible', 'success');
+                    // Clean up test file
+                    await storage.remove([testPath]);
+                }
+                
+                // Check if bucket is public
+                const { data: publicUrl } = storage.getPublicUrl('test');
+                if (publicUrl?.publicUrl) {
+                    html += debugLog(`🌐 Public URL pattern: ${publicUrl.publicUrl}`, 'info');
+                }
+                
+            } catch (err) {
+                html += debugLog(`❌ Storage test failed: ${err.message}`, 'error');
+            }
+            
+            container.innerHTML = html;
+        };
+
+        window.loadInventoryDebug = async () => {
+            const container = document.getElementById('inventory-items');
+            let html = '';
+            
+            try {
+                // Try localStorage first
+                const localInventory = JSON.parse(localStorage.getItem('zippybook.inventory') || '[]');
+                html += debugLog(`📦 Local inventory items: ${localInventory.length}`, 'info');
+                
+                // Try Supabase
+                let remoteInventory = [];
+                try {
+                    remoteInventory = await fetchInventory();
+                    html += debugLog(`☁️ Remote inventory items: ${remoteInventory.length}`, 'success');
+                } catch (err) {
+                    html += debugLog(`❌ Remote fetch failed: ${err.message}`, 'error');
+                }
+                
+                const allItems = [...remoteInventory, ...localInventory];
+                const uniqueItems = allItems.filter((item, index, arr) => 
+                    arr.findIndex(i => i.id === item.id) === index
+                );
+                
+                html += debugLog(`🔍 Total unique items: ${uniqueItems.length}`, 'info');
+                
+                // Display items
+                for (const item of uniqueItems) {
+                    const hasImageUrl = !!(item.imageUrl || item.image_url);
+                    const hasImagePath = !!(item.imagePath || item.image_path);
+                    
+                    html += `
+                        <div class="inventory-item">
+                            <div>
+                                ${hasImageUrl ? 
+                                    `<img src="${item.imageUrl || item.image_url}" alt="${item.name}" class="item-image" 
+                                         onerror="this.style.border='2px solid #ef4444'; this.nextElementSibling.style.display='block';">
+                                     <div style="display:none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;">❌ Image failed to load</div>` :
+                                    `<div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #9ca3af;">No Image</div>`
+                                }
+                            </div>
+                            <div class="item-details">
+                                <h3>${item.name}</h3>
+                                <div class="item-meta"><strong>ID:</strong> ${item.id}</div>
+                                <div class="item-meta"><strong>Price:</strong> $${item.price || '0.00'}</div>
+                                <div class="item-meta"><strong>Stock:</strong> ${item.stock || 0}</div>
+                                <div class="item-meta"><strong>Image URL:</strong> ${hasImageUrl ? `<code>${(item.imageUrl || item.image_url).substring(0, 60)}...</code>` : '❌ None'}</div>
+                                <div class="item-meta"><strong>Image Path:</strong> ${hasImagePath ? `<code>${item.imagePath || item.image_path}</code>` : '❌ None'}</div>
+                                <div class="item-meta"><strong>Created:</strong> ${new Date(item.createdAt || item.created_at).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+            } catch (err) {
+                html += debugLog(`❌ Failed to load inventory: ${err.message}`, 'error');
+            }
+            
+            container.innerHTML = html;
+        };
+
+        window.testImageUrls = async () => {
+            const container = document.getElementById('image-tests');
+            let html = '<h3>Testing Image URLs...</h3>';
+            
+            try {
+                const localInventory = JSON.parse(localStorage.getItem('zippybook.inventory') || '[]');
+                const remoteInventory = await fetchInventory().catch(() => []);
+                const allItems = [...remoteInventory, ...localInventory];
+                
+                const imageUrls = allItems
+                    .map(item => item.imageUrl || item.image_url)
+                    .filter(url => url && url.trim());
+                
+                if (imageUrls.length === 0) {
+                    html += debugLog('⚠️ No image URLs found in inventory', 'warning');
+                } else {
+                    html += debugLog(`🔍 Testing ${imageUrls.length} image URLs...`, 'info');
+                    
+                    for (let i = 0; i < imageUrls.length; i++) {
+                        const url = imageUrls[i];
+                        const shortUrl = url.length > 50 ? url.substring(0, 50) + '...' : url;
+                        
+                        html += `
+                            <div class="image-test">
+                                <img src="${url}" 
+                                     onload="this.nextElementSibling.textContent='✅ OK'; this.nextElementSibling.style.color='green';"
+                                     onerror="this.nextElementSibling.textContent='❌ Failed'; this.nextElementSibling.style.color='red';"
+                                     alt="Test ${i+1}">
+                                <div class="status">Loading...</div>
+                                <div style="font-size: 0.7rem; margin-top: 3px;">${shortUrl}</div>
+                            </div>
+                        `;
+                    }
+                }
+                
+            } catch (err) {
+                html += debugLog(`❌ URL test failed: ${err.message}`, 'error');
+            }
+            
+            container.innerHTML = html;
+        };
+
+        window.testImageUpload = async (event) => {
+            const container = document.getElementById('upload-test-result');
+            const file = event.target.files[0];
+            
+            if (!file) return;
+            
+            let html = debugLog(`📁 File selected: ${file.name} (${(file.size/1024).toFixed(1)}KB)`, 'info');
+            
+            try {
+                // Test authentication first
+                const user = await getCurrentUserOrThrow();
+                html += debugLog(`✅ User authenticated: ${user.email}`, 'success');
+                
+                // Test upload
+                html += debugLog('⬆️ Starting upload...', 'info');
+                const result = await uploadInventoryImage(file, 'test-item');
+                
+                if (result) {
+                    html += debugLog('✅ Upload successful!', 'success');
+                    html += debugLog(`🔗 Result: ${JSON.stringify(result, null, 2)}`, 'info');
+                    
+                    // Test the returned URL
+                    if (result.url) {
+                        html += `
+                            <div style="margin: 10px 0;">
+                                <strong>Uploaded Image Preview:</strong><br>
+                                <img src="${result.url}" style="max-width: 200px; border: 1px solid #ccc; border-radius: 4px;"
+                                     onload="this.nextElementSibling.textContent = '✅ Image loads successfully'"
+                                     onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+                                <div>Loading...</div>
+                            </div>
+                        `;
+                    }
+                }
+                
+            } catch (err) {
+                html += debugLog(`❌ Upload failed: ${err.message}`, 'error');
+                
+                // Provide specific solutions
+                if (err.message.includes('not found')) {
+                    html += debugLog('💡 Create the "inventory-images" bucket in Supabase Storage', 'warning');
+                } else if (err.message.includes('permission') || err.message.includes('RLS')) {
+                    html += debugLog('💡 Add Storage policy: Allow authenticated users to INSERT on inventory-images bucket', 'warning');
+                } else if (err.message.includes('Not authenticated')) {
+                    html += debugLog('💡 Sign in to your business account first', 'warning');
+                }
+            }
+            
+            container.innerHTML = html;
+        };
+
+        // Auto-run basic checks on load
+        window.addEventListener('load', () => {
+            testSupabaseConnection();
+        });
+    </script>
+
+    <div class="debug-section">
+        <h2>📋 Quick Fix Checklist</h2>
+        <div class="debug-item">
+            <strong>1. Supabase Storage Bucket Setup:</strong><br>
+            • Go to your Supabase dashboard → Storage<br>
+            • Create bucket named <code>inventory-images</code><br>
+            • Set bucket to public or configure RLS policies
+        </div>
+        <div class="debug-item">
+            <strong>2. Storage Policies:</strong><br>
+            • Go to Storage → Policies<br>
+            • Add policy for <code>inventory-images</code> bucket<br>
+            • Allow <code>INSERT</code> and <code>SELECT</code> for authenticated users
+        </div>
+        <div class="debug-item">
+            <strong>3. Database Table:</strong><br>
+            • Ensure <code>business_inventory</code> table exists<br>
+            • Check <code>image_url</code> column is present<br>
+            • Verify RLS policies allow your user to insert/select
+        </div>
+    </div>
+</body>
+</html>
